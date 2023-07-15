@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useRouter } from "next/router";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -35,6 +36,7 @@ function Copyright(props) {
 const defaultTheme = createTheme();
 
 export default function login() {
+  const router = useRouter();
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -45,9 +47,6 @@ export default function login() {
   };
   const goToHome = () => {
     router.push("home");
-  };
-  const goToRoom = () => {
-    router.push("room");
   };
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -120,7 +119,7 @@ export default function login() {
                 fullWidth
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
-                onClick={null}
+                onClick={goToHome}
               >
                 Sign In
               </Button>
