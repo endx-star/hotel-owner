@@ -14,7 +14,7 @@ export default function ButtonAppBar() {
           component="div"
           sx={{ flexGrow: 1, marginLeft: 7 }}
         >
-          MyBooking
+          EthioBooking
         </Typography>
 
         <IconButton sx={{ marginRight: 0 }}>

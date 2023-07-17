@@ -26,7 +26,7 @@ function Copyright(props) {
     >
       {"Copyright © "}
       <Link color="inherit" href="#">
-        MyBooking.com
+        EthioBooking.com
       </Link>{" "}
       {new Date().getFullYear()}
       {"."}
@@ -35,18 +35,13 @@ function Copyright(props) {
 }
 const defaultTheme = createTheme();
 
-export default function login() {
+const login = () => {
   const router = useRouter();
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
+  const handleSubmit = (e) => {
+    e.preventDefault();
   };
-  const goToHome = () => {
-    router.push("home");
+  const goToSignUp = () => {
+    router.push("signUp");
   };
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -119,7 +114,6 @@ export default function login() {
                 fullWidth
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
-                onClick={goToHome}
               >
                 Sign In
               </Button>
@@ -127,8 +121,9 @@ export default function login() {
                 <Grid item marginLeft={30} marginTop={5} fontSize={20}>
                   <text>Don't have an account? </text>
                   <Link href="/signUp" variant="body2">
-                    {"Sign Up"}
+                    Sign Up
                   </Link>
+                  {/* <Button onClick={goToSignUp}>Sign Up</Button> */}
                 </Grid>
               </Grid>
               <Copyright sx={{ mt: 5 }} />
@@ -138,4 +133,6 @@ export default function login() {
       </Grid>
     </ThemeProvider>
   );
-}
+};
+
+export default login;
