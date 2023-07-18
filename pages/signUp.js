@@ -12,13 +12,14 @@ import Box from "@mui/material/Box";
 import { InputAdornment, Tooltip, IconButton } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import MailOutlineIcon from "@mui/icons-material/MailOutline";
+import { AddLocation } from "@mui/icons-material";
 import PersonIcon from "@mui/icons-material/Person";
 import PhoneIcon from "@mui/icons-material/Phone";
 import LockIcon from "@mui/icons-material/Lock";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-// import { ToastContainer, toast } from "react-toastify";
-// import { PacmanLoader } from "react-spinners";
+import { ToastContainer, toast } from "react-toastify";
+import { PacmanLoader } from "react-spinners";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useRouter } from "next/router";
 import { useCookie } from "../utils/cookies";
@@ -34,7 +35,7 @@ import { useMutation, gql } from "@apollo/client";
 
 const MUTATESIGNUP = gql`
   mutation addHotel($input: HotelInput!) {
-    addHotel(hotel: $input) {
+    addHotel(hotelInput: $input) {
       _id
       name
       phoneNumber
@@ -90,7 +91,7 @@ const cities = [
 const defaultTheme = createTheme();
 
 const SignUp = () => {
-  // const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [name, setName] = useState("");
   const [nameError, setNameError] = useState(false);
   const [location, setLocation] = useState("");
@@ -108,6 +109,7 @@ const SignUp = () => {
   const router = useRouter();
 
   const handleSubmit = async (e) => {
+    console.log("Hello");
     e.preventDefault();
     if (validateInput()) {
       setLoading(true);
@@ -118,11 +120,13 @@ const SignUp = () => {
               name,
               location,
               phoneNumber,
+              photo,
               email,
               password: passwordValue,
             },
           },
         });
+        console.log(resp);
         setCookie("token", resp["data"]["addHotel"]["token"]);
         sessionStorage.setItem("hotelID", resp["data"]["addHotel"]["_id"]);
         sessionStorage.setItem("hotelOwner", resp["data"]["addHotel"]["name"]);
@@ -134,8 +138,8 @@ const SignUp = () => {
         setLoading(false);
       }
     }
+    console.log(name, email, location);
   };
-
   const handleUploadFile = async (e) => {
     if (e.target.files[0]) {
       setPhotoError(false);
@@ -151,14 +155,14 @@ const SignUp = () => {
       setNameError(true);
     }
   };
-  // const handleLocationChange = (e) => {
-  //   setLocation(e.target.value);
-  //   if (validateLocation(e.target.value)) {
-  //     setLocationError(false);
-  //   } else {
-  //     setLocationError(true);
-  //   }
-  // };
+  const handleLocationChange = (e) => {
+    setLocation(e.target.value);
+    // if (validateLocation(e.target.value)) {
+    //   setLocationError(false);
+    // } else {
+    //   setLocationError(true);
+    // }
+  };
   const handlePhoneChange = (e) => {
     setphoneNumber(e.target.value);
     if (validatePhone(e.target.value)) {
@@ -186,9 +190,9 @@ const SignUp = () => {
     }
   };
 
-  const goToSignIn = () => {
-    router.replace("/");
-  };
+  // const goToSignIn = () => {
+  //   router.replace("/");
+  // };
 
   const validateInput = () => {
     let returnedValue = true;
@@ -221,6 +225,17 @@ const SignUp = () => {
 
   return (
     <ThemeProvider theme={defaultTheme}>
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
@@ -243,6 +258,7 @@ const SignUp = () => {
             onSubmit={handleSubmit}
             sx={{ mt: 3 }}
           >
+            <PacmanLoader color={"#36D7B7"} loading={loading} size={70} />
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <Tooltip title={nameError ? "Please enter a valid name" : ""}>
@@ -270,12 +286,20 @@ const SignUp = () => {
               </Grid>
               <Grid item xs={12}>
                 <TextField
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <AddLocation />
+                      </InputAdornment>
+                    ),
+                  }}
                   required
                   fullWidth
                   id="location"
                   value={location}
                   select
                   label="Hotel Location"
+                  onChange={handleLocationChange}
                 >
                   {cities.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
@@ -406,14 +430,13 @@ const SignUp = () => {
             >
               Sign Up
             </Button>
-            <ThemeProvider>
-              <Grid container justifyContent="flex-end">
-                <Grid item>
-                  <text>Already have an account? </text>
-                  <Button onClick={goToSignIn}>Sign in</Button>
-                </Grid>
+            <Grid container>
+              <Grid item>
+                <text>Already have an account? </text>
+                <Link href="/">Sign in</Link>
+                {/* <Button onClick={goToSignIn}>Sign in</Button> */}
               </Grid>
-            </ThemeProvider>
+            </Grid>
           </Box>
         </Box>
         <Copyright sx={{ mt: 5 }} />
@@ -433,9 +456,10 @@ export const getServerSideProps = async (ctx) => {
         permanent: false,
       },
     };
-    props: {
-    }
   }
+  return {
+    props: {},
+  };
 };
 
 export default SignUp;

@@ -8,6 +8,8 @@ import Link from "@mui/material/Link";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
+import jwt from "jsonwebtoken";
+import { useCookie } from "../utils/cookies";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
@@ -37,6 +39,7 @@ const defaultTheme = createTheme();
 
 const login = () => {
   const router = useRouter();
+  const [getCookie, setCookie] = useCookie();
   const handleSubmit = (e) => {
     e.preventDefault();
   };
@@ -133,6 +136,23 @@ const login = () => {
       </Grid>
     </ThemeProvider>
   );
+};
+
+export const getServerSideProps = (ctx) => {
+  const { req } = ctx;
+  const token = req["cookies"]["token"];
+  if (token) {
+    jwt.verify(token, process.env.JWT_KEY);
+    return {
+      redirect: {
+        destination: "/home",
+        permanent: false,
+      },
+    };
+  }
+  return {
+    props: {},
+  };
 };
 
 export default login;
